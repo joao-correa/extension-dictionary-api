@@ -1,25 +1,24 @@
-$( document ).ready( function () {
+$( document ).ready(  function () {
 
-    $( "#btnTraduzir" ).click( function ( e ) {
+    $( "#btnTraduzir" ).click( async function ( e ) {
         try {
 
-            e.preventDefault();
+            var dict = new Dictionary();
+            
             Animation.init();
 
-            var dict = new Dictionary();
-
-            dict.fetch( $( "#txtTranslate" ).val() )
+            await dict.fetch( $( "#txtTranslate" ).val() )
                 .then( ( response ) => {
 
-                    if ( Object.keys( response ).indexOf( "message" ) == -1) {
-                        dict.handler( response );
-                    }
-
+                    dict.handler( response );
                     Animation.finish();
 
-                } ).catch( () => {
+                }, ( resposne ) => {
+                    console.log( resposne );
                     Animation.finish();
                 } );
+
+            e.preventDefault();
 
         } catch ( ex ) {
             Animation.finish();
@@ -39,11 +38,13 @@ class Animation {
     }
 
     static finish() {
-        var btn = $( "#btnTraduzir" );
-        btn.removeAttr( "disabled" );
-        btn.find( ".loading" ).fadeOut( 'fast', function () {
-            btn.find( ".not-loading" ).fadeIn( "fast" );
-        } );
+        setTimeout(function(){
+            var btn = $( "#btnTraduzir" );
+            btn.removeAttr( "disabled" );
+            btn.find( ".loading" ).fadeOut( 'fast', function () {
+                btn.find( ".not-loading" ).fadeIn( "fast" );
+            } );    
+        }, 250);
     }
 
 }
