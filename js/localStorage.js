@@ -1,7 +1,7 @@
 var storageManager = ( function () {
 
     var local = window.localStorage;
-    var key = 'HistoricExclude';
+    var key = 'Dictionary';
     var verifySupport;
 
     verifySupport = function() {
@@ -13,42 +13,84 @@ var storageManager = ( function () {
     };
 
     if ( verifySupport() ) {
-        local.setItem( key, local.getItem( key ) || JSON.stringify( [] ) );
+        local.setItem( key, local.getItem( key ) || JSON.stringify( {} ) );
     }
 
     return {
-        add: function ( url ) {
+        add: function ( identificador, objeto ) {
             if ( verifySupport() ) {
 
-                let resultado = local.getItem( key );
+                let armazenados = local.getItem( key );
+                let identificadores;
 
-                resultado = JSON.parse( resultado );
-                resultado.push( url );
-                
-                localStorage.setItem( key, JSON.stringify( resultado ) );
+                armazenados = JSON.parse( armazenados );
+                identificadores = Object.keys( armazenados );
 
-                return url;
-
-            }
-        },
-        remove: function ( url ) {
-            if ( verifySupport() ) {
-
-                let itens = local.getItem( key );
-                let index = -1;
-
-                itens = JSON.parse( itens );
-                index = itens.indexOf( url );
-
-                if ( index >= 0 ) {
-                    itens = itens.splice( index, 1 );
-                    local.setItem( key, JSON.stringify( itens ) );
+                if( identificadores.indexOf( identificador ) == -1 ){
+                    armazenados[ identificador ] = objeto;
                 }
 
-                return url;
+                localStorage.setItem( key, JSON.stringify( armazenados ) );
+
+                return identificador;
 
             }
         },
+        remove: function ( identificador ) {
+            if ( verifySupport() ) {
+
+                let armazenados = local.getItem( key );
+                let identificadores;
+
+                armazenados = JSON.parse( armazenados );
+                identificadores = Object.keys( armazenados );
+
+                if( identificadores.indexOf( identificador ) != -1 ){
+                    delete armazenados[ identificador ];
+                }
+
+                localStorage.setItem( key, JSON.stringify( armazenados ) );
+
+                return identificador;
+
+            }
+        },
+        select : function( identificador ){
+            if ( verifySupport() ) {
+
+                let armazenados = local.getItem( key );
+                let identificadores;
+                let retorno = { find: false , identificador : {} };
+
+                armazenados = JSON.parse( armazenados );
+                identificadores = Object.keys( armazenados );
+
+                if( identificadores.indexOf( identificador ) != -1 ){
+                    retorno.find = true;
+                    retorno[ identificador ] = armazenados[ identificador ];
+                }  
+
+                return retorno;
+
+            }
+        },
+        list : function(){
+            if ( verifySupport() ) {
+
+                let armazenados = local.getItem( key );
+                let retorno = [];
+
+                armazenados = JSON.parse( armazenados );
+                identificadores = Object.keys( armazenados );
+
+                identificadores.forEach(identificador => {
+                    retorno.push( armazenados[ identificador ] );
+                });
+
+                return retorno;
+
+            }
+        }
     }
 
 } )();

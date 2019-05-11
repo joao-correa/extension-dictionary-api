@@ -1,28 +1,91 @@
-$( document ).ready(  function () {
+$( document ).ready( function () {
 
     $( "#btnTraduzir" ).click( async function ( e ) {
         try {
 
             var dict = new Dictionary();
-            
+            var text = $( "#txtTranslate" ).val();
+            var item;
+
+            if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
+                return;
+            }
+
             Animation.init();
+            item = storageManager.select( $.trim( text ) );
 
-            await dict.fetch( $( "#txtTranslate" ).val() )
-                .then( ( response ) => {
+            if ( !item.find ) {
 
-                    dict.handler( response );
-                    Animation.finish();
+                await dict.fetch( text )
+                    .then( ( response ) => {
 
-                }, ( resposne ) => {
-                    console.log( resposne );
-                    Animation.finish();
-                } );
+                        dict.handler( response );
+                        storageManager.add( $.trim( text ), response );
+                        Animation.finish();
+
+                    }, ( resposne ) => {
+                        console.log( resposne );
+                        Animation.finish();
+                    } );
+
+            } else {
+
+                dict.handler( item[ $.trim( text ) ] );
+                Animation.finish();
+
+            }
+
+            $( "#bookmarks" ).fadeOut( "fast" , function(){
+                $( "#resultContainer" ).fadeIn( "fast" );
+            });
 
             e.preventDefault();
 
         } catch ( ex ) {
             Animation.finish();
         }
+    } );
+
+    $( "#btnHistorico" ).click( function (e) {
+
+        var retorno = storageManager.list();
+        var template = $( "<div id='historico'></div>" );
+
+        retorno.forEach( item => {
+            
+            var from, to;
+            from = "";
+            to = [];
+
+            item.def.forEach( def => {
+                
+                from = def.text;
+                
+                def.tr.forEach( traducao => {
+                
+                    to.push( traducao.text );
+
+                    traducao.syn = traducao.syn || [];
+                    traducao.syn.forEach( sinonimos => {
+                        to.push( sinonimos.text );
+                    } );
+
+                });
+
+            } );
+
+            template.append( $("<p class=''> <span class='default'>{0}</span> - {1} </p>".format( from, to.join( ', ' ) )) );
+
+        } );                 
+
+        $( "#bookmarks" ).empty();
+        $( "#bookmarks" ).append( template );
+        $( "#resultContainer" ).fadeOut( "fast" , function(){
+            $( "#bookmarks" ).fadeIn( "fast" );
+        });
+
+        e.preventDefault();
+
     } );
 
 } );
@@ -38,13 +101,13 @@ class Animation {
     }
 
     static finish() {
-        setTimeout(function(){
+        setTimeout( function () {
             var btn = $( "#btnTraduzir" );
             btn.removeAttr( "disabled" );
             btn.find( ".loading" ).fadeOut( 'fast', function () {
                 btn.find( ".not-loading" ).fadeIn( "fast" );
-            } );    
-        }, 250);
+            } );
+        }, 250 );
     }
 
 }
@@ -193,11 +256,11 @@ class UserInterface {
     }
 
     static teplateTraducao() {
-        return '<span><span class="font-weight-bold"> {0} - {1}, </span> <span class="{2}"> {2} </span> </span> <br>' ;
+        return '<span><span class=""> {0} - {1}, </span> <span class="{2}"> {2} </span> </span> <br>';
     }
 
     static templateSinonimos() {
-        return "<span> <span class='Sinonimo'> Sinônimos: </span> <span class='default'> {0} </span> </span><br>" ;
+        return "<span> <span class='Sinonimo'> Sinônimos: </span> <span class='default'> {0} </span> </span><br>";
     }
 
 }
