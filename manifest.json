@@ -1,0 +1,31 @@
+{
+    "name": "Remove Historic",
+    "version": "1.0",
+    "description": "Remove Historic Data.",
+    "manifest_version": 2,
+    "page_action": {
+        "default_popup": "index.html",
+        "default_icon": {
+            "16": "img/dictionary-icon.png",
+            "32": "img/dictionary-icon.png",
+            "48": "img/dictionary-icon.png",
+            "128": "img/dictionary-icon.png"
+        }
+    },
+    "icons": {
+        "16": "img/dictionary-logo.png",
+        "32": "img/dictionary-logo.png",
+        "48": "img/dictionary-logo.png",
+        "128": "img/dictionary-logo.png"
+    },
+    "background": {
+        "scripts": [
+            "js/background.js"
+        ],
+        "persistent": false
+    },
+    "permissions": [
+        "declarativeContent",
+        "history"
+    ]
+}

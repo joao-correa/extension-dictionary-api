@@ -1,0 +1,46 @@
+body {
+    font-family: 'Raleway', sans-serif;
+    font-size: 1.0rem;
+}
+
+.fixed-width {
+    width: 500px;
+}
+
+.alert,
+.loading {
+    display: none;
+}
+
+select,
+input {
+    border-radius: 0 !important;
+}
+
+.Sinonimo{
+    font-weight: bolder;
+    color: orangered;
+}
+
+.Adjetivo, 
+.Preposicao, 
+.Traducao, 
+.Substantivo,
+.Adverbio,
+.Traducao, 
+.Substantivo {
+    font-weight: bolder;
+    color: orange;
+}
+
+.Significado,
+.Verbo, 
+.Pronome {
+    font-weight: bolder;
+    color: blue;
+}
+
+.default {
+    font-weight: bolder;
+    color: rgb(99, 95, 95);
+}
