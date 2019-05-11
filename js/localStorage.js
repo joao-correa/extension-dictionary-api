@@ -2,9 +2,9 @@ var storageManager = ( function () {
 
     var local = window.localStorage;
     var key = 'HistoricExclude';
-    var supportVerify;
+    var verifySupport;
 
-    supportVerify = function() {
+    verifySupport = function() {
         if ( typeof ( Storage ) == "undefined" ) {
             throw "localStorage is not supported";
         } else {
@@ -12,13 +12,13 @@ var storageManager = ( function () {
         }
     };
 
-    if ( supportVerify() ) {
+    if ( verifySupport() ) {
         local.setItem( key, local.getItem( key ) || JSON.stringify( [] ) );
     }
 
     return {
         add: function ( url ) {
-            if ( supportVerify() ) {
+            if ( verifySupport() ) {
 
                 let resultado = local.getItem( key );
 
@@ -27,10 +27,12 @@ var storageManager = ( function () {
                 
                 localStorage.setItem( key, JSON.stringify( resultado ) );
 
+                return url;
+
             }
         },
         remove: function ( url ) {
-            if ( supportVerify() ) {
+            if ( verifySupport() ) {
 
                 let itens = local.getItem( key );
                 let index = -1;
@@ -42,6 +44,8 @@ var storageManager = ( function () {
                     itens = itens.splice( index, 1 );
                     local.setItem( key, JSON.stringify( itens ) );
                 }
+
+                return url;
 
             }
         },
