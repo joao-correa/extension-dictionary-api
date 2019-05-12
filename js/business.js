@@ -97,6 +97,8 @@ $( document ).ready( function () {
 
     } );
 
+    $( "#txtTranslate" ).focus();
+
 } );
 
 class Animation {
