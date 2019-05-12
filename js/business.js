@@ -8,7 +8,13 @@ $( document ).ready( function () {
             var item;
 
             if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
+                
+                $( "#resultContainer" ).slideUp();
+                $( "#bookmarks" ).slideUp();
+                Animation.finish();
+                e.preventDefault();
                 return;
+
             }
 
             Animation.init();
@@ -31,6 +37,7 @@ $( document ).ready( function () {
             } else {
 
                 dict.handler( item[ $.trim( text ) ] );
+                storageManager.putFirst( $.trim( text ) );
                 Animation.finish();
 
             }
@@ -74,7 +81,9 @@ $( document ).ready( function () {
 
             } );
 
-            template.append( $("<p class=''> <span class='default'>{0}</span> - {1} </p>".format( from, to.join( ', ' ) )) );
+            if( item.def.length != 0 ){
+                template.append( $("<p class=''> <span class='color-neutral'>{0}</span> - {1} </p>".format( from, to.join( ', ' ) )) );
+            }
 
         } );                 
 
@@ -244,7 +253,7 @@ class UserInterface {
             "pronoun": "Pronome",
         };
 
-        return replaces[ word ] || "default";
+        return replaces[ word ] || "color-neutral";
     }
 
     static appendResponse( template ) {
@@ -256,11 +265,11 @@ class UserInterface {
     }
 
     static teplateTraducao() {
-        return '<span><span class=""> {0} - {1}, </span> <span class="{2}"> {2} </span> </span> <br>';
+        return '<span><span class="color-neutral"> {0} - {1}, </span> <span class="{2}"> {2} </span> </span> <br>';
     }
 
     static templateSinonimos() {
-        return "<span> <span class='Sinonimo'> Sinônimos: </span> <span class='default'> {0} </span> </span><br>";
+        return "<span> <span class='Sinonimo'> Sinônimos: </span> <span class='color-neutral'> {0} </span> </span><br>";
     }
 
 }

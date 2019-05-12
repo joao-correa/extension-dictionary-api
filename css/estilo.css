@@ -1,22 +1,10 @@
-body {
-    font-family: 'Raleway', sans-serif;
-    font-size: 1.0rem;
-    background-color: #101010 !important;
-    color: #ffbb00 !important;
-}
-
 .fixed-width {
     width: 500px;
 }
 
-.btn-custom, .btn-custom:hover, .titulo {
-    background-color: #101010;
-    color: #ffbb00;
-}
-
-.btn-custom:hover {
-    background-color: #ffbb00;
-    color:  #101010;
+select, 
+input {
+    border-radius: 0 !important;
 }
 
 #resultContainer,
@@ -24,39 +12,4 @@ body {
 .alert,
 .loading {
     display: none;
-}
-
-select,
-input{
-    border-radius: 0 !important;
-    background-color: #101010 !important;
-    color: #ffbb00 !important;
-}
-
-.Sinonimo{
-    color: orangered;
-}
-
-hr {
-    background-color: aliceblue;
-}
-
-.Adjetivo, 
-.Preposicao, 
-.Traducao, 
-.Substantivo,
-.Adverbio,
-.Traducao, 
-.Substantivo {
-    color: rgb(84, 212, 235);
-}
-
-.Significado,
-.Verbo, 
-.Pronome {
-    color: blue;
-}
-
-.default {
-    color: rgb(224, 214, 214);
 }

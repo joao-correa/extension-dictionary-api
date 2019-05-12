@@ -87,7 +87,16 @@ var storageManager = ( function () {
                     retorno.push( armazenados[ identificador ] );
                 });
 
-                return retorno;
+                return retorno.reverse();
+
+            }
+        },
+        putFirst : async function( identificador ){
+            if( verifySupport() ){
+
+                let selected = this.select( identificador );
+                this.remove( identificador );
+                this.add( identificador , selected[ identificador ] );
 
             }
         }
