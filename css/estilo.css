@@ -13,3 +13,7 @@ input {
 .loading {
     display: none;
 }
+
+.form-control:focus{
+    box-shadow: none;
+}
