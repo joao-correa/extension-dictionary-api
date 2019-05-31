@@ -8,7 +8,7 @@ $( document ).ready( function () {
             var item;
 
             if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
-                
+
                 $( "#resultContainer" ).slideUp();
                 $( "#bookmarks" ).slideUp();
                 Animation.finish();
@@ -42,9 +42,9 @@ $( document ).ready( function () {
 
             }
 
-            $( "#bookmarks" ).fadeOut( "fast" , function(){
+            $( "#bookmarks" ).fadeOut( "fast", function () {
                 $( "#resultContainer" ).fadeIn( "fast" );
-            });
+            } );
 
             e.preventDefault();
 
@@ -53,23 +53,23 @@ $( document ).ready( function () {
         }
     } );
 
-    $( "#btnHistorico" ).click( function (e) {
+    $( "#btnHistorico" ).click( function ( e ) {
 
         var retorno = storageManager.list();
         var template = $( "<div id='historico'></div>" );
 
         retorno.forEach( item => {
-            
+
             var from, to;
             from = "";
             to = [];
 
             item.def.forEach( def => {
-                
+
                 from = def.text;
-                
+
                 def.tr.forEach( traducao => {
-                
+
                     to.push( traducao.text );
 
                     traducao.syn = traducao.syn || [];
@@ -77,21 +77,21 @@ $( document ).ready( function () {
                         to.push( sinonimos.text );
                     } );
 
-                });
+                } );
 
             } );
 
-            if( item.def.length != 0 ){
-                template.append( $("<p class=''> <span class='color-neutral'>{0}</span> - {1} </p>".format( from, to.join( ', ' ) )) );
+            if ( item.def.length != 0 ) {
+                template.append( $( "<p class=''> <span class='color-neutral'>{0}</span> - {1} </p>".format( from, to.join( ', ' ) ) ) );
             }
 
-        } );                 
+        } );
 
         $( "#bookmarks" ).empty();
         $( "#bookmarks" ).append( template );
-        $( "#resultContainer" ).fadeOut( "fast" , function(){
+        $( "#resultContainer" ).fadeOut( "fast", function () {
             $( "#bookmarks" ).fadeIn( "fast" );
-        });
+        } );
 
         e.preventDefault();
 
