@@ -1,3 +1,8 @@
+import {Config} from "./helpers/config-handler.js";
+import {translate} from "./helpers/translate.js";
+import {Historic} from "./helpers/historic-handler.js";
+import {storageManager} from "./helpers/localStorage.js";
+
 $( document ).ready( function () {
 
     $( "#btnTraduzir" ).click( async function ( e ) {
@@ -9,8 +14,8 @@ $( document ).ready( function () {
 
             if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
 
-                $( "#resultContainer" ).slideUp();
-                $( "#bookmarks" ).slideUp();
+                $( "#ctnResult" ).slideUp();
+                $( "#ctnHist" ).slideUp();
                 Animation.finish();
                 e.preventDefault();
                 return;
@@ -42,8 +47,8 @@ $( document ).ready( function () {
 
             }
 
-            $( "#bookmarks" ).fadeOut( "fast", function () {
-                $( "#resultContainer" ).fadeIn( "fast" );
+            $( "#ctnHist, #ctnConfig" ).slideUp( "fast", function () {
+                $( "#ctnResult" ).slideDown( "fast" );
             } );
 
             e.preventDefault();
@@ -53,49 +58,41 @@ $( document ).ready( function () {
         }
     } );
 
-    $( "#btnHistorico" ).click( function ( e ) {
+    $( "#btnHist" ).click( function ( e ) {
 
-        var retorno = storageManager.list();
-        var template = $( "<div id='historico'></div>" );
+        var retorno = Historic.get();
+        var template = Historic.handler( retorno );
 
-        retorno.forEach( item => {
+        $( "#ctnHist" ).empty();
+        $( "#ctnHist" ).append( template );
 
-            var from, to;
-            from = "";
-            to = [];
-
-            item.def.forEach( def => {
-
-                from = def.text;
-
-                def.tr.forEach( traducao => {
-
-                    to.push( traducao.text );
-
-                    traducao.syn = traducao.syn || [];
-                    traducao.syn.forEach( sinonimos => {
-                        to.push( sinonimos.text );
-                    } );
-
-                } );
-
-            } );
-
-            if ( item.def.length != 0 ) {
-                template.append( $( "<p class=''> <span class='color-neutral'>{0}</span> - {1} </p>".format( from, to.join( ', ' ) ) ) );
-            }
-
-        } );
-
-        $( "#bookmarks" ).empty();
-        $( "#bookmarks" ).append( template );
-        $( "#resultContainer" ).fadeOut( "fast", function () {
-            $( "#bookmarks" ).fadeIn( "fast" );
+        $( "#ctnResult, #ctnConfig" ).slideUp( "fast", function () {
+            $( "#ctnConsulta" ).slideDown( "fast", function(){
+                $( "#ctnHist" ).slideDown( "fast" );
+            });
         } );
 
         e.preventDefault();
 
     } );
+
+    $("#btnConfig").on( "click" , async (e)=>{
+        
+        $( "#ctnConsulta" ).slideUp( "fast", function(){
+            $( "#ctnResult, #ctnHist"  ).slideUp( "fast", function () {
+                $( "#ctnConfig" ).slideDown( "fast" );
+            } );
+        } );
+
+        let langs = await translate.languages();
+        let template = Config.createOptionTemplate( langs );
+
+        $( "#slcFrom" ).append( $( template ) );
+        $( "#slcTo" ).append( $( template ) );
+      
+        e.preventDefault();
+
+    });
 
     $( "#txtTranslate" ).focus();
 
@@ -126,7 +123,7 @@ class Animation {
 class Notify {
 
     static success() {
-        let container = $( "#msgContainer" );
+        let container = $( "#ctnMessage" );
         let htmlObjetc;
         let template = `<div class="alert alert-success alert-dismissible" role="alert">
                             <span id="msgSuccess"></span>
@@ -142,7 +139,7 @@ class Notify {
     }
 
     static fail() {
-        let container = $( "#msgContainer" );
+        let container = $( "#ctnMessage" );
         let htmlObjetc;
         let template = `<div class="alert alert-danger alert-dismissible" role="alert">
                         <span id="msgFail"></span>
@@ -259,11 +256,11 @@ class UserInterface {
     }
 
     static appendResponse( template ) {
-        $( "#resultContainer" ).append( $( template ) );
+        $( "#ctnResult" ).append( $( template ) );
     }
 
     static clearResponses() {
-        $( "#resultContainer" ).empty();
+        $( "#ctnResult" ).empty();
     }
 
     static teplateTraducao() {

@@ -7,7 +7,7 @@ var yandex = ( () => {
     function fetchTranslate( info ) {
         return new Promise( function ( resolve, reject ) {
             
-            let fullUrl = `${ CONFIGS.yandexBaseUrl }?key=${ CONFIGS.yandexApiKey }&lang=${ info.lang }&text=${ info.text }`;
+            let fullUrl = `${ CONFIGS.yandexBaseUrl }lookup?key=${ CONFIGS.yandexApiKey }&lang=${ info.lang }&text=${ info.text }`;
             
             console.log( fullUrl + " -- Fecthing... " );
 
@@ -30,7 +30,7 @@ var yandex = ( () => {
     function fetchLangs() {
         return new Promise( function ( resolve, reject ) {
            
-            let fullUrl = `${ CONFIGS.yandexBaseUrl }?getLangs?key=${ CONFIGS.yandexApiKey }`;
+            let fullUrl = `${ CONFIGS.yandexBaseUrl }getLangs?key=${ CONFIGS.yandexApiKey }`;
 
             console.log( fullUrl + " -- Fecthing... " );
 

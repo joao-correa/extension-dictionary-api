@@ -7,8 +7,10 @@ input {
     border-radius: 0 !important;
 }
 
-#resultContainer,
-#bookmarks,
+#ctnHist,
+#ctnResult,
+#ctnConfig,
+#ctnMessage,
 .alert,
 .loading {
     display: none;
@@ -16,4 +18,8 @@ input {
 
 .form-control:focus{
     box-shadow: none;
+}
+
+#menu-item {
+    font-size: 1.10rem;
 }

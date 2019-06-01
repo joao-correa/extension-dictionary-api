@@ -17,13 +17,17 @@
 <body>
     <div class="container-fluid fixed-width">
         <div class="row mt-3">
-            <div class="col-12">
+            <div class="col-11">
                 <h2 class=" text-center color-primary"> Dictionary</h2>
-                <h5 class=" text-center color-secondary">English - Portuguese </h5>
+                <h5 class=" text-center color-secondary" id="txtFromTo">English - Portuguese </h5>
+            </div>
+            <div class="col-1 text-center" id="menu-item">
+                <a href="#" id="btnConfig"> <i class="fas fa-cog mt-2"></i></a>
+                <a href="#" id="btnHist"> <i class="fas fa-history mt-3"></i></a>
             </div>
         </div>
         <hr>
-        <div class="row my-2">
+        <div class="row my-2" id="ctnConsulta">
             <div class="col-12">
                 <form action="" class="form">
                     <div class="input-group ">
@@ -38,42 +42,63 @@
                                 </span>
                             </button>
                         </div>
-                        <div class="input-group-prepend">
-                            <button id="btnHistorico" class="btn btn-custom input-group-text" title="Histórico">
-                                <span class="not-loading">
-                                    <i class="fas fa-bookmark"></i>
-                                </span>
-                                <span class="loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </span>
-                            </button>
-                        </div>
                     </div>
                 </form>
             </div>
         </div>
         <div class="row">
-            <div class="col-12" id="bookmarks">
+            <div class="col-12" id="ctnHist">
 
             </div>
         </div>
         <div class="row my-2">
-            <div class="col-12" id="resultContainer">
+            <div class="col-12" id="ctnResult">
 
             </div>
         </div>
+        <div class="row my-2">
+            <div class="col-12" id="ctnConfig">
+                <form action="" class="form">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="slcFrom">From : </label>
+                        </div>
+                        <div class="col-9">
+                            <select name="" id="slcFrom" class="form-control"></select>
+                        </div>
+                    </div> 
+                    <br>
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="slcTo">To : </label>
+                        </div>
+                        <div class="col-9">
+                            <select name="" id="slcTo" class="form-control"></select>
+                        </div>
+                    </div>
+                </form>
+                <div class="row my-2">
+                    <div class="col-4 offset-8">
+                        <button class="btn btn-custom float-right">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
-            <div class="col-12" id="msgContainer">
-
+            <div class="col-12" id="ctnMessage">
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-12 text-right" id="ctnInfo">
+                <span>Developed by <a target="_blank" href="https://github.com/TheVictoor"> TheVictoor </a></span> and 
+                <span><a target="_blank" href="https://yandex.com/company/"> Yandex </a></span>
             </div>
         </div>
     </div>
 
-    <script src="src/js/jquery.js"></script>
-    <script src="src/js/bootstrap.js"></script>
-    <script src="src/js/translate.js"></script>
-    <script src="src/js/localStorage.js"></script>
-    <script src="src/js/business.js"></script>
+    <script src="src/js/frameworks/jquery.js"></script>
+    <script src="src/js/frameworks/bootstrap.js"></script>
+    <script src="src/js/business.js" type="module"></script>
 
 </body>
 

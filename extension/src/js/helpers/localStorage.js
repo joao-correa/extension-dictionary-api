@@ -84,6 +84,7 @@ var storageManager = ( function () {
             if ( verifySupport() ) {
 
                 let armazenados = local.getItem( key );
+                let identificadores;
                 let retorno = [];
 
                 armazenados = JSON.parse( armazenados );
@@ -117,3 +118,5 @@ var storageManager = ( function () {
     }
 
 } )();
+
+export { storageManager as storageManager };
