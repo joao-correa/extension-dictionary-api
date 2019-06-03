@@ -23,7 +23,7 @@ var storageManager = ( function () {
     }
 
     return {
-        add: function ( identificador, objeto ) {
+        add: function ( identificador, objeto, key = "Dictionary" ) {
             if ( verifySupport() ) {
 
                 let armazenados = local.getItem( key );
@@ -42,7 +42,7 @@ var storageManager = ( function () {
 
             }
         },
-        remove: function ( identificador ) {
+        remove: function ( identificador, key = "Dictionary"  ) {
             if ( verifySupport() ) {
 
                 let armazenados = local.getItem( key );
@@ -61,7 +61,7 @@ var storageManager = ( function () {
 
             }
         },
-        select : function( identificador ){
+        select : function( identificador, key = "Dictionary" ){
             if ( verifySupport() ) {
 
                 let armazenados = local.getItem( key );
@@ -80,7 +80,7 @@ var storageManager = ( function () {
 
             }
         },
-        list : function(){
+        list : function( key = "Dictionary" ){
             if ( verifySupport() ) {
 
                 let armazenados = local.getItem( key );
@@ -98,12 +98,12 @@ var storageManager = ( function () {
 
             }
         },
-        putFirst : async function( identificador ){
+        putFirst : async function( identificador, key = "Dictionary"  ){
             if( verifySupport() ){
 
-                let selected = this.select( identificador );
-                this.remove( identificador );
-                this.add( identificador , selected[ identificador ] );
+                let selected = this.select( identificador , key );
+                this.remove( identificador , key );
+                this.add( identificador , selected[ identificador ], key );
 
             }
         },
