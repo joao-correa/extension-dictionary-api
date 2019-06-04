@@ -1,4 +1,4 @@
-import { storageManager } from "./localStorage.js";
+import { StorageManager } from "./localStorage.js";
 
 var translate = ( function () {
 
@@ -6,7 +6,7 @@ var translate = ( function () {
     let lang = "en-pt";
 
     function getHeader() {
-        let browserIdentifier = storageManager.getGUID();
+        let browserIdentifier = StorageManager.getGUID();
         let fetchHeader = new Headers( {
             "x-browser-identifier": browserIdentifier,
             "Content-Type": "application/json",
@@ -56,4 +56,4 @@ var translate = ( function () {
 
 } )();
 
-export { translate as translate };
+export { translate as Translate };

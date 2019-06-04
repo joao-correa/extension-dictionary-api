@@ -1,5 +1,5 @@
 import { Idiomas } from "./idiomas.js";
-import { storageManager } from "./localStorage.js";
+import { StorageManager } from "./localStorage.js";
 
 class Config {
 
@@ -35,8 +35,8 @@ class Config {
         } );
 
         // ARMAZERNAR AS OPCOES
-        storageManager.remove( "options" , "Dict-Language" );
-        storageManager.add( "options", arrayLangagues , "Dict-Languages" );
+        StorageManager.remove( "options" , "DictLanguage" );
+        StorageManager.add( "options", JSON.stringify(arrayLangagues) , "DictLanguage" );
 
         return template;
 
@@ -44,24 +44,36 @@ class Config {
 
     static  saveOption( choiceObject ){
 
-        let languages = storageManager.select( "options" , "Dict-Languages" );
-        let fromTo = `${choiceObject.fromSigla}-${choiceObject.toSigla}`;
+        let languages = StorageManager.select( "options" , "DictLanguage" );
+        let fromTo = `${choiceObject.from}-${choiceObject.to}`;
 
-        if( languages.includes( fromTo.toLocaleLowerCase() ) ){
-            storageManager.remove( "config" , "Dict-Languages" );
-            storageManager.add( "config" , fromTo , "Dict-Languages" );
-            storageManager.remove( "config-object" , "Dict-Languages" );
-            storageManager.add( "config-object" , choiceObject , "Dict-Languages" );
-            return true;
+        languages = JSON.parse(languages.options || []); 
+
+        if( languages.includes( fromTo.toLowerCase() ) ){
+    
+            StorageManager.remove( "config" , "DictLanguage" );
+            StorageManager.remove( "config-object" , "DictLanguage" );
+    
+            StorageManager.add( "config" , fromTo , "DictLanguage" );
+            StorageManager.add( "config-object" , choiceObject , "DictLanguage" );
+    
+            return {
+                response : true,
+                message : "Configuracoes salvas com sucesso"
+            };
+
         }
 
-        return false;
+        return {
+            response : true,
+            message : "Nao foi possivel salvar suas configuracoes"
+        };
 
     }
 
-    static  getOption(){
+    static select( property, collection ){
 
-        let options = storageManager.select( "config-object", "Dict-Languages");
+        let options = StorageManager.select( property , collection );
         return options || {};
 
     }

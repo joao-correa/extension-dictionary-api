@@ -7,103 +7,99 @@ function uuidv4() {
 var storageManager = ( function () {
 
     var local = window.localStorage;
-    var key = 'Dictionary';
     var verifySupport;
 
-    verifySupport = function() {
+    verifySupport = function( collection ) {
         if ( typeof ( Storage ) == "undefined" ) {
             throw "localStorage is not supported";
         } else {
+            local.setItem( collection, local.getItem( collection ) || JSON.stringify( {} ) );    
             return true;
         }
     };
 
-    if ( verifySupport() ) {
-        local.setItem( key, local.getItem( key ) || JSON.stringify( {} ) );
-    }
-
     return {
-        add: function ( identificador, objeto, key = "Dictionary" ) {
-            if ( verifySupport() ) {
+        add: function ( propriedade, objeto, collection = "Dictionary" ) {
+            if ( verifySupport(collection) ) {
 
-                let armazenados = local.getItem( key );
-                let identificadores;
+                let armazenados = local.getItem( collection );
+                let propriedades;
 
                 armazenados = JSON.parse( armazenados );
-                identificadores = Object.keys( armazenados );
+                propriedades = Object.keys( armazenados );
 
-                if( identificadores.indexOf( identificador ) == -1 ){
-                    armazenados[ identificador ] = objeto;
+                if(!propriedades.includes( propriedade )){
+                    armazenados[ propriedade ] = objeto;
                 }
 
-                localStorage.setItem( key, JSON.stringify( armazenados ) );
+                localStorage.setItem( collection, JSON.stringify( armazenados ) );
 
-                return identificador;
+                return propriedade;
 
             }
         },
-        remove: function ( identificador, key = "Dictionary"  ) {
-            if ( verifySupport() ) {
+        remove: function ( propriedade, collection = "Dictionary"  ) {
+            if ( verifySupport(collection) ) {
 
-                let armazenados = local.getItem( key );
-                let identificadores;
+                let armazenados = local.getItem( collection );
+                let propriedades;
 
                 armazenados = JSON.parse( armazenados );
-                identificadores = Object.keys( armazenados );
+                propriedades = Object.keys( armazenados );
 
-                if( identificadores.indexOf( identificador ) != -1 ){
-                    delete armazenados[ identificador ];
+                if( propriedades.includes( propriedade ) ){
+                    delete armazenados[ propriedade ];
                 }
 
-                localStorage.setItem( key, JSON.stringify( armazenados ) );
+                localStorage.setItem( collection, JSON.stringify( armazenados ) );
 
-                return identificador;
+                return propriedade;
 
             }
         },
-        select : function( identificador, key = "Dictionary" ){
-            if ( verifySupport() ) {
+        select : function( propriedade, collection = "Dictionary" ){
+            if ( verifySupport(collection) ) {
 
-                let armazenados = local.getItem( key );
-                let identificadores;
-                let retorno = { find: false , identificador : {} };
+                let armazenados = local.getItem( collection );
+                let propriedades;
+                let retorno = { find: false , propriedade : {} };
 
                 armazenados = JSON.parse( armazenados );
-                identificadores = Object.keys( armazenados );
+                propriedades = Object.keys( armazenados );
 
-                if( identificadores.indexOf( identificador ) != -1 ){
+                if( propriedades.includes( propriedade ) ){
                     retorno.find = true;
-                    retorno[ identificador ] = armazenados[ identificador ];
+                    retorno[ propriedade ] = armazenados[ propriedade ];
                 }  
 
                 return retorno;
 
             }
         },
-        list : function( key = "Dictionary" ){
-            if ( verifySupport() ) {
+        list : function( collection = "Dictionary" ){
+            if ( verifySupport(collection) ) {
 
-                let armazenados = local.getItem( key );
-                let identificadores;
+                let armazenados = local.getItem( collection );
+                let propriedades;
                 let retorno = [];
 
                 armazenados = JSON.parse( armazenados );
-                identificadores = Object.keys( armazenados );
+                propriedades = Object.keys( armazenados );
 
-                identificadores.forEach(identificador => {
-                    retorno.push( armazenados[ identificador ] );
+                propriedades.forEach(propriedade => {
+                    retorno.push( armazenados[ propriedade ] );
                 });
 
                 return retorno.reverse();
 
             }
         },
-        putFirst : async function( identificador, key = "Dictionary"  ){
-            if( verifySupport() ){
+        putFirst : async function( propriedade, collection = "Dictionary"  ){
+            if( verifySupport(collection) ){
 
-                let selected = this.select( identificador , key );
-                this.remove( identificador , key );
-                this.add( identificador , selected[ identificador ], key );
+                let selected = this.select( propriedade , collection );
+                this.remove( propriedade , collection );
+                this.add( propriedade , selected[ propriedade ], collection );
 
             }
         },
@@ -119,4 +115,4 @@ var storageManager = ( function () {
 
 } )();
 
-export { storageManager as storageManager };
+export { storageManager as StorageManager };

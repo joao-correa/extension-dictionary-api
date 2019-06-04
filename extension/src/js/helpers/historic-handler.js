@@ -1,9 +1,9 @@
-import {storageManager} from "./localStorage.js";
+import {StorageManager} from "./localStorage.js";
 
 class Historic {
 
     static get(){
-        return storageManager.list();
+        return StorageManager.list();
     }
 
     static handler( json ){

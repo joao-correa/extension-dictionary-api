@@ -1,11 +1,15 @@
-import {Config} from "./helpers/config-handler.js";
-import {translate} from "./helpers/translate.js";
-import {Historic} from "./helpers/historic-handler.js";
-import {storageManager} from "./helpers/localStorage.js";
+import { Config } from "./helpers/config-handler.js";
+import { Translate } from "./helpers/translate.js";
+import { Historic } from "./helpers/historic-handler.js";
+import { StorageManager } from "./helpers/localStorage.js";
+import { Idiomas } from "./helpers/idiomas.js";
 
 $( document ).ready( function () {
 
-    $( "#btnTraduzir" ).click( async function ( e ) {
+    UserInterface.setTitle();
+    $( "#txtTranslate" ).focus();
+
+    $( "#btnTraduzir" ).on( "click", async ( e ) => {
         try {
 
             var dict = new Dictionary();
@@ -23,7 +27,7 @@ $( document ).ready( function () {
             }
 
             Animation.init();
-            item = storageManager.select( $.trim( text ) );
+            item = StorageManager.select( $.trim( text ) );
 
             if ( !item.find ) {
 
@@ -31,7 +35,7 @@ $( document ).ready( function () {
                     .then( ( response ) => {
 
                         dict.handler( response );
-                        storageManager.add( $.trim( text ), response );
+                        StorageManager.add( $.trim( text ), response );
                         Animation.finish();
 
                     }, ( resposne ) => {
@@ -42,7 +46,7 @@ $( document ).ready( function () {
             } else {
 
                 dict.handler( item[ $.trim( text ) ] );
-                storageManager.putFirst( $.trim( text ) );
+                StorageManager.putFirst( $.trim( text ) );
                 Animation.finish();
 
             }
@@ -58,7 +62,7 @@ $( document ).ready( function () {
         }
     } );
 
-    $( "#btnHist" ).click( function ( e ) {
+    $( "#btnHist" ).on( "click", ( e ) => {
 
         var retorno = Historic.get();
         var template = Historic.handler( retorno );
@@ -67,34 +71,65 @@ $( document ).ready( function () {
         $( "#ctnHist" ).append( template );
 
         $( "#ctnResult, #ctnConfig" ).slideUp( "fast", function () {
-            $( "#ctnConsulta" ).slideDown( "fast", function(){
+            $( "#ctnConsulta" ).slideDown( "fast", function () {
                 $( "#ctnHist" ).slideDown( "fast" );
-            });
+            } );
         } );
 
         e.preventDefault();
 
     } );
 
-    $("#btnConfig").on( "click" , async (e)=>{
-        
-        $( "#ctnConsulta" ).slideUp( "fast", function(){
-            $( "#ctnResult, #ctnHist"  ).slideUp( "fast", function () {
+    $( "#btnHome" ).on( "click", ( e ) => {
+
+        $( "#txtTranslate" ).val( "" );
+        $( "#ctnHist" ).empty();
+
+        $( "#ctnResult, #ctnConfig, #ctnHist" ).slideUp( "fast", function () {
+            $( "#ctnConsulta" ).slideDown( "fast" );
+        } );
+
+        e.preventDefault();
+
+    } );
+
+    $( "#btnConfig" ).on( "click", async ( e ) => {
+
+        $( "#ctnConsulta" ).slideUp( "fast", function () {
+            $( "#ctnResult, #ctnHist" ).slideUp( "fast", function () {
                 $( "#ctnConfig" ).slideDown( "fast" );
             } );
         } );
 
-        let langs = await translate.languages();
+        let langs = await Translate.languages();
         let template = Config.createOptionTemplate( langs );
 
         $( "#slcFrom" ).append( $( template ) );
         $( "#slcTo" ).append( $( template ) );
-      
+
         e.preventDefault();
 
-    });
+    } );
 
-    $( "#txtTranslate" ).focus();
+    $( "#btnSalvarConfig" ).on( "click", ( e ) => {
+
+        let data = {};
+        let retorno = {};
+
+        data.from = $( "#slcFrom" ).val();
+        data.to = $( "#slcTo" ).val();
+
+        retorno = Config.saveOption( data );
+
+        if ( !retorno.response ) {
+            alert( retorno.message );
+        } else {
+            UserInterface.setTitle();
+        }
+
+        e.preventDefault();
+
+    } );
 
 } );
 
@@ -172,7 +207,7 @@ class Dictionary {
             _this.check( text );
 
             if ( _this.isValid ) {
-                translate.fetch( text )
+                Translate.fetch( text )
                     .then( ( json ) => { resolve( json ) } );
             } else {
                 reject( { message: "The text is not valid." } );
@@ -269,6 +304,27 @@ class UserInterface {
 
     static templateSinonimos() {
         return "<span> <span class='Sinonimo'> Sinônimos: </span> <span class='color-neutral'> {0} </span> </span><br>";
+    }
+
+    static setTitle() {
+
+        let configUser = Config.select( "config-object", "DictLanguage" );
+        let title;
+
+        if ( configUser.find ) {
+            configUser = configUser[ "config-object" ];
+        } else {
+            configUser = {
+                from: "EN",
+                to: "PT"
+            }
+            Config.saveOption( configUser );
+        }
+
+        title = `${ Idiomas[ configUser.from.toUpperCase() ] }-${ Idiomas[ configUser.to.toUpperCase() ] }`;
+
+        $( "#txtFromTo" ).text( title );
+
     }
 
 }
