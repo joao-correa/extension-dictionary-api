@@ -1,9 +1,19 @@
 import { StorageManager } from "./localStorage.js";
+import { Config } from "./config-handler.js";
 
 var translate = ( function () {
 
-    let url = "http://localhost:3000/dictionary/";
-    let lang = "en-pt";
+    let url = "http://localhost:3000/dictionary/"; // TODO: TORNAR ESSE URL UM PARAMETRO CONFIGURAVEL 
+    let lang = ""; 
+
+    {   // SET THE LANGUAGE VALUE
+        let result = Config.select( "config" , "DictLanguage" );
+        if( result.find ){
+            lang = result.config.toLowerCase();
+        }else {
+            lang = "en-pt";
+        }
+    }
 
     function getHeader() {
         let browserIdentifier = StorageManager.getGUID();

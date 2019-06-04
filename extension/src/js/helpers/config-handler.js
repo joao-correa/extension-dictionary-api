@@ -54,7 +54,7 @@ class Config {
             StorageManager.remove( "config" , "DictLanguage" );
             StorageManager.remove( "config-object" , "DictLanguage" );
     
-            StorageManager.add( "config" , fromTo , "DictLanguage" );
+            StorageManager.add( "config" , fromTo.toLowerCase() , "DictLanguage" );
             StorageManager.add( "config-object" , choiceObject , "DictLanguage" );
     
             return {
