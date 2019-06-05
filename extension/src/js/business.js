@@ -28,17 +28,16 @@ $( document ).ready( function () {
 
             if ( !item.find ) {
 
-                await dict.fetch( text )
-                    .then( ( response ) => {
-
-                        dict.handler( response );
-                        StorageManager.add( $.trim( text ), response );
-                        Animation.finish();
-
-                    }, ( resposne ) => {
-                        console.log( resposne );
-                        Animation.finish();
-                    } );
+                try {
+                    let response;
+                    response = await dict.fetch( text );
+                    dict.handler( response );
+                    StorageManager.add( $.trim( text ), response );
+                } catch ( ex ) {
+                    console.log( resposne );
+                } finally {
+                    Animation.finish();
+                }
 
             } else {
 
