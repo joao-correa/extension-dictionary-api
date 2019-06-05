@@ -17,13 +17,10 @@ $( document ).ready( function () {
             var item;
 
             if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
-
                 $( "#ctnResult" ).slideUp();
                 $( "#ctnHist" ).slideUp();
-                Animation.finish();
                 e.preventDefault();
                 return;
-
             }
 
             Animation.init();
