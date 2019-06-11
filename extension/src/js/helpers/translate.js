@@ -4,16 +4,7 @@ import { Config } from "./config-handler.js";
 var translate = ( function () {
 
     let url = "http://localhost:3000/dictionary/"; // TODO: TORNAR ESSE URL UM PARAMETRO CONFIGURAVEL 
-    let lang = ""; 
-
-    {   // SET THE LANGUAGE VALUE
-        let result = Config.select( "config" , "DictLanguage" );
-        if( result.find ){
-            lang = result.config.toLowerCase();
-        }else {
-            lang = "en-pt";
-        }
-    }
+    let lang = "";
 
     function getHeader() {
         let browserIdentifier = StorageManager.getGUID();
@@ -29,6 +20,9 @@ var translate = ( function () {
         fetch: function ( text ) {
             return new Promise( function ( resolve, reject ) {
 
+                let { config } = Config.select( 'config' );
+
+                lang = config;
                 text = encodeURI( text );
 
                 fetch( url, {
@@ -46,12 +40,9 @@ var translate = ( function () {
 
             } );
         },
-        languages: function ( text ) {
+        languages: function ( ) {
             return new Promise( function ( resolve, reject ) {
-
-                text = encodeURI( text );
-
-                fetch( `${url}langs`, {
+                fetch( `${ url }langs`, {
                     method: "GET",
                     headers: getHeader()
                 } ).then( function ( response ) {

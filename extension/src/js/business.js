@@ -9,12 +9,12 @@ $( document ).ready( function () {
     UserInterface.setTitle();
     $( "#txtTranslate" ).focus();
 
-    $( "#btnTraduzir" ).on( "click", async ( e ) => {
+    $( "#btnTranslate" ).on( "click", async ( e ) => {
         try {
 
-            var dict = new Dictionary();
-            var text = $( "#txtTranslate" ).val();
-            var item;
+            let dict = new Dictionary();
+            let text = $( "#txtTranslate" ).val();
+            let item, collectionName;
 
             if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
                 $( "#ctnResult" ).slideUp();
@@ -23,16 +23,17 @@ $( document ).ready( function () {
                 return;
             }
 
+
             Animation.init();
-            item = StorageManager.select( $.trim( text ) );
+            collectionName = Config.select( 'config' )[ 'config' ];
+            item = StorageManager.select( $.trim( text ), collectionName );
 
             if ( !item.find ) {
 
                 try {
-                    let response;
-                    response = await dict.fetch( text );
+                    let response = await dict.fetch( text );
                     dict.handler( response );
-                    StorageManager.add( $.trim( text ), response );
+                    StorageManager.add( $.trim( text ), response, collectionName );
                 } catch ( ex ) {
                     console.log( resposne );
                 } finally {
@@ -42,7 +43,7 @@ $( document ).ready( function () {
             } else {
 
                 dict.handler( item[ $.trim( text ) ] );
-                StorageManager.putFirst( $.trim( text ) );
+                StorageManager.putFirst( $.trim( text ), collectionName );
                 Animation.finish();
 
             }
@@ -107,7 +108,7 @@ $( document ).ready( function () {
 
     } );
 
-    $( "#btnSalvarConfig" ).on( "click", ( e ) => {
+    $( "#btnSaveConfig" ).on( "click", ( e ) => {
 
         let data = {};
         let retorno = {};
@@ -132,7 +133,7 @@ $( document ).ready( function () {
 class Animation {
 
     static init() {
-        var btn = $( "#btnTraduzir" );
+        var btn = $( "#btnTranslate" );
         btn.attr( "disabled", "disabled" );
         btn.find( ".not-loading" ).fadeOut( 'fast', function () {
             btn.find( ".loading" ).fadeIn( "fast" );
@@ -141,7 +142,7 @@ class Animation {
 
     static finish() {
         setTimeout( function () {
-            var btn = $( "#btnTraduzir" );
+            var btn = $( "#btnTranslate" );
             btn.removeAttr( "disabled" );
             btn.find( ".loading" ).fadeOut( 'fast', function () {
                 btn.find( ".not-loading" ).fadeIn( "fast" );

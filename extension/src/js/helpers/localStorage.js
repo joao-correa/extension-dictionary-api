@@ -1,26 +1,26 @@
-function uuidv4() {
-    return ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace( /[018]/g, c =>
-        ( c ^ crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & 15 >> c / 4 ).toString( 16 )
-    )
-}
-
 var storageManager = ( function () {
 
     var local = window.localStorage;
     var verifySupport;
 
-    verifySupport = function( collection ) {
+    function uuidv4() {
+        return ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace( /[018]/g, c =>
+            ( c ^ crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & 15 >> c / 4 ).toString( 16 )
+        )
+    }
+
+    verifySupport = function ( collection ) {
         if ( typeof ( Storage ) == "undefined" ) {
             throw "localStorage is not supported";
         } else {
-            local.setItem( collection, local.getItem( collection ) || JSON.stringify( {} ) );    
+            local.setItem( collection, local.getItem( collection ) || JSON.stringify( {} ) );
             return true;
         }
     };
 
     return {
         add: function ( propriedade, objeto, collection = "Dictionary" ) {
-            if ( verifySupport(collection) ) {
+            if ( verifySupport( collection ) ) {
 
                 let armazenados = local.getItem( collection );
                 let propriedades;
@@ -28,7 +28,7 @@ var storageManager = ( function () {
                 armazenados = JSON.parse( armazenados );
                 propriedades = Object.keys( armazenados );
 
-                if(!propriedades.includes( propriedade )){
+                if ( !propriedades.includes( propriedade ) ) {
                     armazenados[ propriedade ] = objeto;
                 }
 
@@ -38,8 +38,8 @@ var storageManager = ( function () {
 
             }
         },
-        remove: function ( propriedade, collection = "Dictionary"  ) {
-            if ( verifySupport(collection) ) {
+        remove: function ( propriedade, collection = "Dictionary" ) {
+            if ( verifySupport( collection ) ) {
 
                 let armazenados = local.getItem( collection );
                 let propriedades;
@@ -47,7 +47,7 @@ var storageManager = ( function () {
                 armazenados = JSON.parse( armazenados );
                 propriedades = Object.keys( armazenados );
 
-                if( propriedades.includes( propriedade ) ){
+                if ( propriedades.includes( propriedade ) ) {
                     delete armazenados[ propriedade ];
                 }
 
@@ -57,27 +57,27 @@ var storageManager = ( function () {
 
             }
         },
-        select : function( propriedade, collection = "Dictionary" ){
-            if ( verifySupport(collection) ) {
+        select: function ( propriedade, collection = "Dictionary" ) {
+            if ( verifySupport( collection ) ) {
 
                 let armazenados = local.getItem( collection );
                 let propriedades;
-                let retorno = { find: false , propriedade : {} };
+                let retorno = { find: false, propriedade: {} };
 
                 armazenados = JSON.parse( armazenados );
                 propriedades = Object.keys( armazenados );
 
-                if( propriedades.includes( propriedade ) ){
+                if ( propriedades.includes( propriedade ) ) {
                     retorno.find = true;
                     retorno[ propriedade ] = armazenados[ propriedade ];
-                }  
+                }
 
                 return retorno;
 
             }
         },
-        list : function( collection = "Dictionary" ){
-            if ( verifySupport(collection) ) {
+        list: function ( collection = "Dictionary" ) {
+            if ( verifySupport( collection ) ) {
 
                 let armazenados = local.getItem( collection );
                 let propriedades;
@@ -86,28 +86,28 @@ var storageManager = ( function () {
                 armazenados = JSON.parse( armazenados );
                 propriedades = Object.keys( armazenados );
 
-                propriedades.forEach(propriedade => {
+                propriedades.forEach( propriedade => {
                     retorno.push( armazenados[ propriedade ] );
-                });
+                } );
 
                 return retorno.reverse();
 
             }
         },
-        putFirst : async function( propriedade, collection = "Dictionary"  ){
-            if( verifySupport(collection) ){
+        putFirst: async function ( propriedade, collection = "Dictionary" ) {
+            if ( verifySupport( collection ) ) {
 
-                let selected = this.select( propriedade , collection );
-                this.remove( propriedade , collection );
-                this.add( propriedade , selected[ propriedade ], collection );
+                let selected = this.select( propriedade, collection );
+                this.remove( propriedade, collection );
+                this.add( propriedade, selected[ propriedade ], collection );
 
             }
         },
-        getGUID : function(){
-            
+        getGUID: function () {
+
             let guid = local.getItem( "UserGuid" );
             guid = guid || uuidv4();
-            local.setItem( "UserGuid" , guid );
+            local.setItem( "UserGuid", guid );
             return guid;
 
         }
