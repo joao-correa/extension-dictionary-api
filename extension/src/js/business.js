@@ -6,334 +6,335 @@ import { Idiomas } from "./helpers/idiomas.js";
 
 $( document ).ready( function () {
 
-    UserInterface.setTitle();
-    $( "#txtTranslate" ).focus();
+	UserInterface.setTitle();
+	$( "#txtTranslate" ).focus();
 
-    $( "#btnTranslate" ).on( "click", async ( e ) => {
-        try {
+	$( "#btnTranslate" ).on( "click", async ( e ) => {
+		try {
 
-            let dict = new Dictionary();
-            let text = $( "#txtTranslate" ).val();
-            let item, collectionName;
+			let dict = new Dictionary();
+			let text = $( "#txtTranslate" ).val();
+			let item, collectionName;
 
-            if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
-                $( "#ctnResult" ).slideUp();
-                $( "#ctnHist" ).slideUp();
-                e.preventDefault();
-                return;
-            }
+			if ( $.trim( text ).length == 0 || /.{1,}\s.{1,}/gi.test( text ) ) {
+				$( "#ctnResult" ).slideUp();
+				$( "#ctnHist" ).slideUp();
+				e.preventDefault();
+				return;
+			}
 
 
-            Animation.init();
-            collectionName = Config.select( 'config' )[ 'config' ];
-            item = StorageManager.select( $.trim( text ), collectionName );
+			Animation.init();
+			collectionName = Config.select( 'config' )[ 'config' ];
+			item = StorageManager.select( $.trim( text ), collectionName );
 
-            if ( !item.find ) {
+			if ( !item.find ) {
 
-                try {
-                    let response = await dict.fetch( text );
-                    dict.handler( response );
-                    StorageManager.add( $.trim( text ), response, collectionName );
-                } catch ( ex ) {
-                    console.log( resposne );
-                } finally {
-                    Animation.finish();
-                }
+				try {
+					let response = await dict.fetch( text );
+					dict.handler( response );
+					StorageManager.add( $.trim( text ), response, collectionName );
+				} catch ( ex ) {
+					console.log( resposne );
+				} finally {
+					Animation.finish();
+				}
 
-            } else {
+			} else {
 
-                dict.handler( item[ $.trim( text ) ] );
-                StorageManager.putFirst( $.trim( text ), collectionName );
-                Animation.finish();
+				dict.handler( item[ $.trim( text ) ] );
+				StorageManager.putFirst( $.trim( text ), collectionName );
+				Animation.finish();
 
-            }
+			}
 
-            $( "#ctnHist, #ctnConfig" ).slideUp( "fast", function () {
-                $( "#ctnResult" ).slideDown( "fast" );
-            } );
+			$( "#ctnHist, #ctnConfig" ).slideUp( "fast", function () {
+				$( "#ctnResult" ).slideDown( "fast" );
+			} );
 
-            e.preventDefault();
+			e.preventDefault();
 
-        } catch ( ex ) {
-            Animation.finish();
-        }
-    } );
+		} catch ( ex ) {
+			Animation.finish();
+		}
+	} );
 
-    $( "#btnHist" ).on( "click", ( e ) => {
+	$( "#btnHist" ).on( "click", ( e ) => {
 
-        var retorno = Historic.get();
-        var template = Historic.handler( retorno );
+		let collectionName = Config.select( 'config' )[ 'config' ];
+		let retorno = Historic.get(collectionName);
+		var template = Historic.handler( retorno );
 
-        $( "#ctnHist" ).empty();
-        $( "#ctnHist" ).append( template );
+		$( "#ctnHist" ).empty();
+		$( "#ctnHist" ).append( template );
 
-        $( "#ctnResult, #ctnConfig" ).slideUp( "fast", function () {
-            $( "#ctnConsulta" ).slideDown( "fast", function () {
-                $( "#ctnHist" ).slideDown( "fast" );
-            } );
-        } );
+		$( "#ctnResult, #ctnConfig" ).slideUp( "fast", function () {
+			$( "#ctnConsulta" ).slideDown( "fast", function () {
+				$( "#ctnHist" ).slideDown( "fast" );
+			} );
+		} );
 
-        e.preventDefault();
+		e.preventDefault();
 
-    } );
+	} );
 
-    $( "#btnHome" ).on( "click", ( e ) => {
+	$( "#btnHome" ).on( "click", ( e ) => {
 
-        $( "#txtTranslate" ).val( "" );
-        $( "#ctnHist" ).empty();
+		$( "#txtTranslate" ).val( "" );
+		$( "#ctnHist" ).empty();
 
-        $( "#ctnResult, #ctnConfig, #ctnHist" ).slideUp( "fast", function () {
-            $( "#ctnConsulta" ).slideDown( "fast" );
-        } );
+		$( "#ctnResult, #ctnConfig, #ctnHist" ).slideUp( "fast", function () {
+			$( "#ctnConsulta" ).slideDown( "fast" );
+		} );
 
-        e.preventDefault();
+		e.preventDefault();
 
-    } );
+	} );
 
-    $( "#btnConfig" ).on( "click", async ( e ) => {
+	$( "#btnConfig" ).on( "click", async ( e ) => {
 
-        $( "#ctnConsulta" ).slideUp( "fast", function () {
-            $( "#ctnResult, #ctnHist" ).slideUp( "fast", function () {
-                $( "#ctnConfig" ).slideDown( "fast" );
-            } );
-        } );
+		$( "#ctnConsulta" ).slideUp( "fast", function () {
+			$( "#ctnResult, #ctnHist" ).slideUp( "fast", function () {
+				$( "#ctnConfig" ).slideDown( "fast" );
+			} );
+		} );
 
-        let langs = await Translate.languages();
-        let template = Config.createOptionTemplate( langs );
+		let langs = await Translate.languages();
+		let template = Config.createOptionTemplate( langs );
 
-        $( "#slcFrom" ).append( $( template ) );
-        $( "#slcTo" ).append( $( template ) );
+		$( "#slcFrom" ).append( $( template ) );
+		$( "#slcTo" ).append( $( template ) );
 
-        e.preventDefault();
+		e.preventDefault();
 
-    } );
+	} );
 
-    $( "#btnSaveConfig" ).on( "click", ( e ) => {
+	$( "#btnSaveConfig" ).on( "click", async ( e ) => {
 
-        let data = {};
-        let retorno = {};
+		let data = {};
+		let retorno = {};
 
-        data.from = $( "#slcFrom" ).val();
-        data.to = $( "#slcTo" ).val();
+		data.from = $( "#slcFrom" ).val();
+		data.to = $( "#slcTo" ).val();
 
-        retorno = Config.saveOption( data );
+		retorno = await Config.saveOption( data );
 
-        if ( !retorno.response ) {
-            alert( retorno.message );
-        } else {
-            UserInterface.setTitle();
-        }
+		if ( !retorno.response ) {
+			alert( retorno.message );
+		} else {
+			UserInterface.setTitle();
+		}
 
-        e.preventDefault();
+		e.preventDefault();
 
-    } );
+	} );
 
 } );
 
 class Animation {
 
-    static init() {
-        var btn = $( "#btnTranslate" );
-        btn.attr( "disabled", "disabled" );
-        btn.find( ".not-loading" ).fadeOut( 'fast', function () {
-            btn.find( ".loading" ).fadeIn( "fast" );
-        } );
-    }
+	static init() {
+		var btn = $( "#btnTranslate" );
+		btn.attr( "disabled", "disabled" );
+		btn.find( ".not-loading" ).fadeOut( 'fast', function () {
+			btn.find( ".loading" ).fadeIn( "fast" );
+		} );
+	}
 
-    static finish() {
-        setTimeout( function () {
-            var btn = $( "#btnTranslate" );
-            btn.removeAttr( "disabled" );
-            btn.find( ".loading" ).fadeOut( 'fast', function () {
-                btn.find( ".not-loading" ).fadeIn( "fast" );
-            } );
-        }, 250 );
-    }
+	static finish() {
+		setTimeout( function () {
+			var btn = $( "#btnTranslate" );
+			btn.removeAttr( "disabled" );
+			btn.find( ".loading" ).fadeOut( 'fast', function () {
+				btn.find( ".not-loading" ).fadeIn( "fast" );
+			} );
+		}, 250 );
+	}
 
 }
 
 class Notify {
 
-    static success() {
-        let container = $( "#ctnMessage" );
-        let htmlObjetc;
-        let template = `<div class="alert alert-success alert-dismissible" role="alert">
-                            <span id="msgSuccess"></span>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>`;
+	static success() {
+		let container = $( "#ctnMessage" );
+		let htmlObjetc;
+		let template = `<div class="alert alert-success alert-dismissible" role="alert">
+											<span id="msgSuccess"></span>
+											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>`;
 
-        htmlObjetc = $( template );
-        htmlObjetc.find( "#msgSuccess" ).text( mensagem );
-        container.append( htmlObjetc );
-        htmlObjetc.fadeIn( "fast" );
-    }
+		htmlObjetc = $( template );
+		htmlObjetc.find( "#msgSuccess" ).text( mensagem );
+		container.append( htmlObjetc );
+		htmlObjetc.fadeIn( "fast" );
+	}
 
-    static fail() {
-        let container = $( "#ctnMessage" );
-        let htmlObjetc;
-        let template = `<div class="alert alert-danger alert-dismissible" role="alert">
-                        <span id="msgFail"></span>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+	static fail() {
+		let container = $( "#ctnMessage" );
+		let htmlObjetc;
+		let template = `<div class="alert alert-danger alert-dismissible" role="alert">
+											<span id="msgFail"></span>
+											<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
                     </div>`;
 
-        htmlObjetc = $( template );
-        htmlObjetc.find( "#msgFail" ).text( mensagem );
-        container.append( htmlObjetc );
-        htmlObjetc.fadeIn( "fast" );
-    }
+		htmlObjetc = $( template );
+		htmlObjetc.find( "#msgFail" ).text( mensagem );
+		container.append( htmlObjetc );
+		htmlObjetc.fadeIn( "fast" );
+	}
 
 }
 
 class Dictionary {
 
-    constructor () {
-        this.keyLocalStorage = "";
-        this.isValid = true;
-        this.regex = /.{1,}\s.{1,}/gi;
-    }
+	constructor () {
+		this.keyLocalStorage = "";
+		this.isValid = true;
+		this.regex = /.{1,}\s.{1,}/gi;
+	}
 
-    fetch( text ) {
-        let _this = this;
+	fetch( text ) {
+		let _this = this;
 
-        return new Promise( function ( resolve, reject ) {
+		return new Promise( function ( resolve, reject ) {
 
-            _this.check( text );
+			_this.check( text );
 
-            if ( _this.isValid ) {
-                Translate.fetch( text )
-                    .then( ( json ) => { resolve( json ) } );
-            } else {
-                reject( { message: "The text is not valid." } );
-            }
+			if ( _this.isValid ) {
+				Translate.fetch( text )
+					.then( ( json ) => { resolve( json ) } );
+			} else {
+				reject( { message: "The text is not valid." } );
+			}
 
-        } );
-    }
+		} );
+	}
 
-    check( text ) {
-        try {
+	check( text ) {
+		try {
 
-            this.isValid = true;
+			this.isValid = true;
 
-            if ( $.trim( text ).length == 0 ) {
-                this.isValid = false;
-            }
+			if ( $.trim( text ).length == 0 ) {
+				this.isValid = false;
+			}
 
-            if ( this.regex.test( text ) ) {
-                this.isValid = false;
-            }
+			if ( this.regex.test( text ) ) {
+				this.isValid = false;
+			}
 
-        } catch ( ex ) {
-            this.isValid = false;
-        }
-    }
+		} catch ( ex ) {
+			this.isValid = false;
+		}
+	}
 
-    handler( json ) {
+	handler( json ) {
 
-        UserInterface.clearResponses();
+		UserInterface.clearResponses();
 
-        json.def.forEach( block => {
+		json.def.forEach( block => {
 
-            block.tr.forEach( i => {
+			block.tr.forEach( i => {
 
-                let word = "";
-                let wordTranslated = "";
-                let type = "";
-                let sinonimos = [];
-                let template;
+				let word = "";
+				let wordTranslated = "";
+				let type = "";
+				let sinonimos = [];
+				let template;
 
-                word = block.text.toString();
-                type = UserInterface.replaceTerms( i.pos );
-                wordTranslated = i.text;
+				word = block.text.toString();
+				type = UserInterface.replaceTerms( i.pos );
+				wordTranslated = i.text;
 
-                i.syn = i.syn || [];
-                i.syn.forEach( sinonimo => {
-                    sinonimos.push( sinonimo.text );
-                } );
+				i.syn = i.syn || [];
+				i.syn.forEach( sinonimo => {
+					sinonimos.push( sinonimo.text );
+				} );
 
-                template = UserInterface.teplateTraducao().format( word, wordTranslated, type );
-                UserInterface.appendResponse( template );
+				template = UserInterface.teplateTraducao().format( word, wordTranslated, type );
+				UserInterface.appendResponse( template );
 
-                if ( sinonimos.length > 0 ) {
-                    template = UserInterface.templateSinonimos().format( sinonimos.join( ", " ) );
-                    UserInterface.appendResponse( template );
-                }
+				if ( sinonimos.length > 0 ) {
+					template = UserInterface.templateSinonimos().format( sinonimos.join( ", " ) );
+					UserInterface.appendResponse( template );
+				}
 
-                UserInterface.appendResponse( $( "<hr>" ) );
+				UserInterface.appendResponse( $( "<hr>" ) );
 
-            } );
+			} );
 
-        } );
+		} );
 
-    }
+	}
 
 }
 
 class UserInterface {
 
-    static replaceTerms( word ) {
-        let replaces = {
-            "noun": "Substantivo",
-            "adverb": "Adverbio",
-            "adjective": "Adjetivo",
-            "verb": "Verbo",
-            "preposition": "Preposicao",
-            "pronoun": "Pronome",
-        };
+	static replaceTerms( word ) {
+		let replaces = {
+			"noun": "Substantivo",
+			"adverb": "Adverbio",
+			"adjective": "Adjetivo",
+			"verb": "Verbo",
+			"preposition": "Preposicao",
+			"pronoun": "Pronome",
+		};
 
-        return replaces[ word ] || "color-neutral";
-    }
+		return replaces[ word ] || "color-neutral";
+	}
 
-    static appendResponse( template ) {
-        $( "#ctnResult" ).append( $( template ) );
-    }
+	static appendResponse( template ) {
+		$( "#ctnResult" ).append( $( template ) );
+	}
 
-    static clearResponses() {
-        $( "#ctnResult" ).empty();
-    }
+	static clearResponses() {
+		$( "#ctnResult" ).empty();
+	}
 
-    static teplateTraducao() {
-        return '<span><span class="color-neutral"> {0} - {1}, </span> <span class="{2}"> {2} </span> </span> <br>';
-    }
+	static teplateTraducao() {
+		return '<span><span class="color-neutral"> {0} - {1}, </span> <span class="{2}"> {2} </span> </span> <br>';
+	}
 
-    static templateSinonimos() {
-        return "<span> <span class='Sinonimo'> Sinônimos: </span> <span class='color-neutral'> {0} </span> </span><br>";
-    }
+	static templateSinonimos() {
+		return "<span> <span class='Sinonimo'> Sinônimos: </span> <span class='color-neutral'> {0} </span> </span><br>";
+	}
 
-    static setTitle() {
+	static setTitle() {
 
-        let configUser = Config.select( "config-object", "DictLanguage" );
-        let title;
+		let configUser = Config.select( "config-object", "DictLanguage" );
+		let title;
 
-        if ( configUser.find ) {
-            configUser = configUser[ "config-object" ];
-        } else {
-            configUser = {
-                from: "EN",
-                to: "PT"
-            }
-            Config.saveOption( configUser );
-        }
+		if ( configUser.find ) {
+			configUser = configUser[ "config-object" ];
+		} else {
+			configUser = {
+				from: "EN",
+				to: "PT"
+			}
+			Config.saveOption( configUser );
+		}
 
-        title = `${ Idiomas[ configUser.from.toUpperCase() ] }-${ Idiomas[ configUser.to.toUpperCase() ] }`;
+		title = `${ Idiomas[ configUser.from.toUpperCase() ] }-${ Idiomas[ configUser.to.toUpperCase() ] }`;
 
-        $( "#txtFromTo" ).text( title );
+		$( "#txtFromTo" ).text( title );
 
-    }
+	}
 
 }
 
 if ( !String.prototype.format ) {
-    String.prototype.format = function () {
-        var args = arguments;
-        return this.replace( /{(\d+)}/g, function ( match, number ) {
-            return typeof args[ number ] != 'undefined'
-                ? args[ number ]
-                : match
-                ;
-        } );
-    };
+	String.prototype.format = function () {
+		var args = arguments;
+		return this.replace( /{(\d+)}/g, function ( match, number ) {
+			return typeof args[ number ] != 'undefined'
+				? args[ number ]
+				: match
+				;
+		} );
+	};
 }

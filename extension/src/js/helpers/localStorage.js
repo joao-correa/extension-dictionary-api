@@ -1,117 +1,117 @@
 var storageManager = ( function () {
 
-    var local = window.localStorage;
-    var verifySupport;
+	var local = window.localStorage;
+	var verifySupport;
 
-    function uuidv4() {
-        return ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace( /[018]/g, c =>
-            ( c ^ crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & 15 >> c / 4 ).toString( 16 )
-        )
-    }
+	function uuidv4() {
+		return ( [ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11 ).replace( /[018]/g, c =>
+			( c ^ crypto.getRandomValues( new Uint8Array( 1 ) )[ 0 ] & 15 >> c / 4 ).toString( 16 )
+		)
+	}
 
-    verifySupport = function ( collection ) {
-        if ( typeof ( Storage ) == "undefined" ) {
-            throw "localStorage is not supported";
-        } else {
-            local.setItem( collection, local.getItem( collection ) || JSON.stringify( {} ) );
-            return true;
-        }
-    };
+	verifySupport = function ( collection ) {
+		if ( typeof ( Storage ) == "undefined" ) {
+			throw "localStorage is not supported";
+		} else {
+			local.setItem( collection, local.getItem( collection ) || JSON.stringify( {} ) );
+			return true;
+		}
+	};
 
-    return {
-        add: function ( propriedade, objeto, collection = "Dictionary" ) {
-            if ( verifySupport( collection ) ) {
+	return {
+		add: function ( propriedade, objeto, collection = "Dictionary" ) {
+			if ( verifySupport( collection ) ) {
 
-                let armazenados = local.getItem( collection );
-                let propriedades;
+				let armazenados = local.getItem( collection );
+				let propriedades;
 
-                armazenados = JSON.parse( armazenados );
-                propriedades = Object.keys( armazenados );
+				armazenados = JSON.parse( armazenados );
+				propriedades = Object.keys( armazenados );
 
-                if ( !propriedades.includes( propriedade ) ) {
-                    armazenados[ propriedade ] = objeto;
-                }
+				if ( !propriedades.includes( propriedade ) ) {
+					armazenados[ propriedade ] = objeto;
+				}
 
-                localStorage.setItem( collection, JSON.stringify( armazenados ) );
+				localStorage.setItem( collection, JSON.stringify( armazenados ) );
 
-                return propriedade;
+				return propriedade;
 
-            }
-        },
-        remove: function ( propriedade, collection = "Dictionary" ) {
-            if ( verifySupport( collection ) ) {
+			}
+		},
+		remove: function ( propriedade, collection = "Dictionary" ) {
+			if ( verifySupport( collection ) ) {
 
-                let armazenados = local.getItem( collection );
-                let propriedades;
+				let armazenados = local.getItem( collection );
+				let propriedades;
 
-                armazenados = JSON.parse( armazenados );
-                propriedades = Object.keys( armazenados );
+				armazenados = JSON.parse( armazenados );
+				propriedades = Object.keys( armazenados );
 
-                if ( propriedades.includes( propriedade ) ) {
-                    delete armazenados[ propriedade ];
-                }
+				if ( propriedades.includes( propriedade ) ) {
+					delete armazenados[ propriedade ];
+				}
 
-                localStorage.setItem( collection, JSON.stringify( armazenados ) );
+				localStorage.setItem( collection, JSON.stringify( armazenados ) );
 
-                return propriedade;
+				return propriedade;
 
-            }
-        },
-        select: function ( propriedade, collection = "Dictionary" ) {
-            if ( verifySupport( collection ) ) {
+			}
+		},
+		select: function ( propriedade, collection = "Dictionary" ) {
+			if ( verifySupport( collection ) ) {
 
-                let armazenados = local.getItem( collection );
-                let propriedades;
-                let retorno = { find: false, propriedade: {} };
+				let armazenados = local.getItem( collection );
+				let propriedades;
+				let retorno = { find: false, propriedade: {} };
 
-                armazenados = JSON.parse( armazenados );
-                propriedades = Object.keys( armazenados );
+				armazenados = JSON.parse( armazenados );
+				propriedades = Object.keys( armazenados );
 
-                if ( propriedades.includes( propriedade ) ) {
-                    retorno.find = true;
-                    retorno[ propriedade ] = armazenados[ propriedade ];
-                }
+				if ( propriedades.includes( propriedade ) ) {
+					retorno.find = true;
+					retorno[ propriedade ] = armazenados[ propriedade ];
+				}
 
-                return retorno;
+				return retorno;
 
-            }
-        },
-        list: function ( collection = "Dictionary" ) {
-            if ( verifySupport( collection ) ) {
+			}
+		},
+		list: function ( collection = "Dictionary" ) {
+			if ( verifySupport( collection ) ) {
 
-                let armazenados = local.getItem( collection );
-                let propriedades;
-                let retorno = [];
+				let armazenados = local.getItem( collection );
+				let propriedades;
+				let retorno = [];
 
-                armazenados = JSON.parse( armazenados );
-                propriedades = Object.keys( armazenados );
+				armazenados = JSON.parse( armazenados );
+				propriedades = Object.keys( armazenados );
 
-                propriedades.forEach( propriedade => {
-                    retorno.push( armazenados[ propriedade ] );
-                } );
+				propriedades.forEach( propriedade => {
+					retorno.push( armazenados[ propriedade ] );
+				} );
 
-                return retorno.reverse();
+				return retorno.reverse();
 
-            }
-        },
-        putFirst: async function ( propriedade, collection = "Dictionary" ) {
-            if ( verifySupport( collection ) ) {
+			}
+		},
+		putFirst: async function ( propriedade, collection = "Dictionary" ) {
+			if ( verifySupport( collection ) ) {
 
-                let selected = this.select( propriedade, collection );
-                this.remove( propriedade, collection );
-                this.add( propriedade, selected[ propriedade ], collection );
+				let selected = this.select( propriedade, collection );
+				this.remove( propriedade, collection );
+				this.add( propriedade, selected[ propriedade ], collection );
 
-            }
-        },
-        getGUID: function () {
+			}
+		},
+		getGUID: function () {
 
-            let guid = local.getItem( "UserGuid" );
-            guid = guid || uuidv4();
-            local.setItem( "UserGuid", guid );
-            return guid;
+			let guid = local.getItem( "UserGuid" );
+			guid = guid || uuidv4();
+			local.setItem( "UserGuid", guid );
+			return guid;
 
-        }
-    }
+		}
+	}
 
 } )();
 

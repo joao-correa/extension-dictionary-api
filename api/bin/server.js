@@ -8,61 +8,54 @@ let http = require( 'http' );
 let port = normalizePort( process.env.PORT || "3000" )  //3000;
 let server;
 
-// PORT SETTINGS
-app.set( 'port' , port );
+app.set( 'port', port );
 
-// SERVER SETTINGS
 server = http.createServer( app );
 server.listen( port );
 server.on( 'error', onError );
-server.on( "listening" , onListening );
+server.on( "listening", onListening );
 
-// FUNCTIONS DEFINITIONS
-function normalizePort( val ){
-    let port = parseInt( val , 10 );
+function normalizePort( val ) {
+	let port = parseInt( val, 10 );
 
-    if( isNaN( port ) ){
-        return val;
-    }
+	if ( isNaN( port ) )
+		return val;
 
-    if( port >= 0 ){
-        return port;
-    }
+	if ( port >= 0 )
+		return port;
 
-    return false;
+	return false;
 }
 
-function onError( error ){
+function onError( error ) {
+	if ( error.syscall !== 'listen' ) 
+		throw error;
 
-    if( error.syscall !== 'listen' ){
-        throw error;
-    }
+	let bind = typeof port === "string" ?
+		'Pipe' + port :
+		'Port' + port;
 
-    let bind = typeof port === "string" ? 
-        'Pipe' + port : 
-        'Port' + port;
-
-    switch( error.code ){
-        case 'EACCES':
-            console.error( bind + ' require elevated privileges' );
-            process.exit( 1 );
-            break;
-        case 'EADDRINUSE': 
-            console.log( bind + ' is already in use' );
-            process.exit( 1 );
-            break;
-        default:
-            throw error;
-    }
+	switch ( error.code ) {
+		case 'EACCES':
+			console.error( bind + ' require elevated privileges' );
+			process.exit( 1 );
+			break;
+		case 'EADDRINUSE':
+			console.log( bind + ' is already in use' );
+			process.exit( 1 );
+			break;
+		default:
+			throw error;
+	}
 }
 
-function onListening(){
-    let addr = server.address();
-    let bind = typeof addr === "string"
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
+function onListening() {
+	let addr = server.address();
+	let bind = typeof addr === "string"
+		? 'pipe ' + addr
+		: 'port ' + addr.port;
 
-    debug( 'Listening on ' + bind);
+	debug( 'Listening on ' + bind );
 }
 
 console.log( 'Servidor Inicializado...' );
